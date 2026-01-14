@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash, Plus } from "lucide-react";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { API_URL } from '@/config/api';
 
 interface Capsule {
   _id: string;
@@ -43,7 +44,7 @@ export const CapsulesSection = () => {
 
   const fetchCapsules = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/capsules');
+      const response = await fetch(`${API_URL}/api/capsules`);
       const data = await response.json();
       setCapsules(data);
     } catch (error) {
@@ -56,8 +57,8 @@ export const CapsulesSection = () => {
   const handleSave = async () => {
     try {
       const url = isEditing
-        ? `http://localhost:5001/api/capsules/${currentCapsule._id}`
-        : 'http://localhost:5001/api/capsules';
+        ? `${API_URL}/api/capsules/${currentCapsule._id}`
+        : `${API_URL}/api/capsules`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -87,7 +88,7 @@ export const CapsulesSection = () => {
     if (!itemToDelete) return;
 
     try {
-      await fetch(`http://localhost:5001/api/capsules/${itemToDelete}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/capsules/${itemToDelete}`, { method: 'DELETE' });
       fetchCapsules();
       setIsDeleteModalOpen(false);
       setItemToDelete(null);

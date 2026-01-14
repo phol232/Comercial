@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select"
 import { Pencil, Trash, FileText, Folder, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { API_URL } from '@/config/api';
 
 interface Material {
   _id: string;
@@ -50,7 +51,7 @@ export const MaterialsSection = () => {
 
   const fetchMaterials = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/materials');
+      const response = await fetch(`${API_URL}/api/materials`);
       const data = await response.json();
       setMaterials(data);
     } catch (error) {
@@ -63,8 +64,8 @@ export const MaterialsSection = () => {
   const handleSave = async () => {
     try {
       const url = isEditing
-        ? `http://localhost:5001/api/materials/${currentMaterial._id}`
-        : 'http://localhost:5001/api/materials';
+        ? `${API_URL}/api/materials/${currentMaterial._id}`
+        : `${API_URL}/api/materials`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -94,7 +95,7 @@ export const MaterialsSection = () => {
     if (!itemToDelete) return;
 
     try {
-      await fetch(`http://localhost:5001/api/materials/${itemToDelete}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/materials/${itemToDelete}`, { method: 'DELETE' });
       fetchMaterials();
       setIsDeleteModalOpen(false);
       setItemToDelete(null);

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select"
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { API_URL } from '@/config/api';
 
 interface Resource {
   _id: string;
@@ -54,7 +55,7 @@ export const ResourcesSection = () => {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/resources');
+      const response = await fetch(`${API_URL}/api/resources`);
       const data = await response.json();
       setResources(data);
     } catch (error) {
@@ -67,8 +68,8 @@ export const ResourcesSection = () => {
   const handleSave = async () => {
     try {
       const url = isEditing 
-        ? `http://localhost:5001/api/resources/${currentResource._id}`
-        : 'http://localhost:5001/api/resources';
+        ? `${API_URL}/api/resources/${currentResource._id}`
+        : `${API_URL}/api/resources`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -100,7 +101,7 @@ export const ResourcesSection = () => {
     if (!itemToDelete) return;
 
     try {
-      await fetch(`http://localhost:5001/api/resources/${itemToDelete}`, {
+      await fetch(`${API_URL}/api/resources/${itemToDelete}`, {
         method: 'DELETE',
       });
       fetchResources();

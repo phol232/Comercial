@@ -14,6 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { API_URL } from '@/config/api';
 
 interface Category {
   _id: string;
@@ -40,7 +41,7 @@ export const ContentSection = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/categories');
+      const response = await fetch(`${API_URL}/api/categories`);
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -53,8 +54,8 @@ export const ContentSection = () => {
   const handleSave = async () => {
     try {
       const url = isEditing 
-        ? `http://localhost:5001/api/categories/${currentCategory._id}`
-        : 'http://localhost:5001/api/categories';
+        ? `${API_URL}/api/categories/${currentCategory._id}`
+        : `${API_URL}/api/categories`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -86,7 +87,7 @@ export const ContentSection = () => {
     if (!itemToDelete) return;
     
     try {
-      await fetch(`http://localhost:5001/api/categories/${itemToDelete}`, {
+      await fetch(`${API_URL}/api/categories/${itemToDelete}`, {
         method: 'DELETE',
       });
       fetchCategories();

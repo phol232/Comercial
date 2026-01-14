@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash, Play, Plus } from "lucide-react";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { API_URL } from '@/config/api';
 
 interface Industry {
   _id: string;
@@ -60,8 +61,8 @@ export const DemosSection = () => {
   const fetchData = async () => {
     try {
       const [industriesRes, demosRes] = await Promise.all([
-        fetch('http://localhost:5001/api/industries'),
-        fetch('http://localhost:5001/api/demos')
+        fetch(`${API_URL}/api/industries`),
+        fetch(`${API_URL}/api/demos`)
       ]);
       
       const industriesData = await industriesRes.json();
@@ -80,8 +81,8 @@ export const DemosSection = () => {
   const handleSaveIndustry = async () => {
     try {
       const url = isEditingIndustry
-        ? `http://localhost:5001/api/industries/${currentIndustry._id}`
-        : 'http://localhost:5001/api/industries';
+        ? `${API_URL}/api/industries/${currentIndustry._id}`
+        : `${API_URL}/api/industries`;
       
       const method = isEditingIndustry ? 'PUT' : 'POST';
       
@@ -118,8 +119,8 @@ export const DemosSection = () => {
 
     const { id, type } = itemToDelete;
     const url = type === 'industry' 
-      ? `http://localhost:5001/api/industries/${id}`
-      : `http://localhost:5001/api/demos/${id}`;
+      ? `${API_URL}/api/industries/${id}`
+      : `${API_URL}/api/demos/${id}`;
 
     try {
       await fetch(url, { method: 'DELETE' });
@@ -148,8 +149,8 @@ export const DemosSection = () => {
   const handleSaveDemo = async () => {
     try {
       const url = isEditingDemo
-        ? `http://localhost:5001/api/demos/${currentDemo._id}`
-        : 'http://localhost:5001/api/demos';
+        ? `${API_URL}/api/demos/${currentDemo._id}`
+        : `${API_URL}/api/demos`;
       
       const method = isEditingDemo ? 'PUT' : 'POST';
       
