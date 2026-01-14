@@ -1,0 +1,29 @@
+---
+import "@/styles/global.css"
+import { Hero } from "@/components/Hero"
+import { ContentSection } from "@/components/ContentSection"
+import { ResourcesSection } from "@/components/ResourcesSection"
+import { MaterialsSection } from "@/components/MaterialsSection"
+import { DemosSection } from "@/components/DemosSection"
+import { CapsulesSection } from "@/components/CapsulesSection"
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Laraigo - Potencia tu trabajo</title>
+	</head>
+	<body class="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
+		<main>
+			<Hero client:load />
+            <ContentSection client:load />
+            <ResourcesSection client:load />
+            <DemosSection client:load />
+            <CapsulesSection client:load />
+            <MaterialsSection client:load />
+		</main>
+	</body>
+</html>
