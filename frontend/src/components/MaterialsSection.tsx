@@ -65,15 +65,18 @@ export const MaterialsSection = () => {
     }
   };
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSave = async () => {
+    setError(null);
     // Basic validation
     if (!currentMaterial.title || !currentMaterial.type || !currentMaterial.url) {
-      alert("Por favor completa el título, tipo y URL de descarga.");
+      setError("Por favor completa el título, tipo y URL de descarga.");
       return;
     }
     
     if (currentMaterial.type === 'video' && !currentMaterial.videoUrl) {
-       alert("Por favor ingresa la URL del video (Embed).");
+       setError("Por favor ingresa la URL del video (Embed).");
        return;
     }
 
@@ -95,11 +98,11 @@ export const MaterialsSection = () => {
         setCurrentMaterial({});
         setIsEditing(false);
       } else {
-        alert("Error al guardar material.");
+        setError("Error al guardar material.");
       }
     } catch (error) {
       console.error('Error saving material:', error);
-      alert("Error de conexión al guardar.");
+      setError("Error de conexión al guardar.");
     }
   };
 
@@ -124,12 +127,14 @@ export const MaterialsSection = () => {
   const openAddDialog = () => {
     setCurrentMaterial({ type: 'presentation' });
     setIsEditing(false);
+    setError(null);
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (material: Material) => {
     setCurrentMaterial(material);
     setIsEditing(true);
+    setError(null);
     setIsDialogOpen(true);
   };// ... (useEffect and fetchMaterials)
 
@@ -352,25 +357,31 @@ export const MaterialsSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="title">
-                Título
+              <Label htmlFor="title" className={!currentMaterial.title && error ? "text-red-500" : ""}>
+                Título *
               </Label>
               <Input
                 id="title"
                 value={currentMaterial.title || ''}
                 onChange={(e) => setCurrentMaterial({ ...currentMaterial, title: e.target.value })}
+                className={!currentMaterial.title && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="type">
-                Tipo
+              <Label htmlFor="type" className={!currentMaterial.type && error ? "text-red-500" : ""}>
+                Tipo *
               </Label>
               <Select 
                 value={currentMaterial.type || 'presentation'}
                 onValueChange={(value: any) => setCurrentMaterial({ ...currentMaterial, type: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className={!currentMaterial.type && error ? "border-red-500 ring-red-500" : ""}>
                   <SelectValue placeholder="Seleccionar tipo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -383,27 +394,29 @@ export const MaterialsSection = () => {
             
             {currentMaterial.type === 'video' && (
               <div className="flex flex-col gap-2">
-                <Label htmlFor="videoUrl">
-                  URL Video (Embed)
+                <Label htmlFor="videoUrl" className={!currentMaterial.videoUrl && error ? "text-red-500" : ""}>
+                  URL Video (Embed) *
                 </Label>
                 <Input
                   id="videoUrl"
                   value={currentMaterial.videoUrl || ''}
                   onChange={(e) => setCurrentMaterial({ ...currentMaterial, videoUrl: e.target.value })}
                   placeholder="https://www.youtube.com/embed/..."
+                  className={!currentMaterial.videoUrl && error ? "border-red-500 focus-visible:ring-red-500" : ""}
                 />
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="url">
-                URL Descarga / Link
+              <Label htmlFor="url" className={!currentMaterial.url && error ? "text-red-500" : ""}>
+                URL Descarga / Link *
               </Label>
               <Input
                 id="url"
                 value={currentMaterial.url || ''}
                 onChange={(e) => setCurrentMaterial({ ...currentMaterial, url: e.target.value })}
                 placeholder="https://drive.google.com/..."
+                className={!currentMaterial.url && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
           </div>

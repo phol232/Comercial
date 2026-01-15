@@ -38,6 +38,7 @@ export const ContentSection = () => {
   // Delete Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -69,9 +70,10 @@ export const ContentSection = () => {
 
 
   const handleSave = async () => {
+    setError(null);
     // Basic validation
     if (!currentCategory.title || !currentCategory.description || !currentCategory.image || !currentCategory.link) {
-      alert("Por favor completa todos los campos.");
+      setError("Por favor completa todos los campos.");
       return;
     }
 
@@ -93,11 +95,11 @@ export const ContentSection = () => {
         setCurrentCategory({});
         setIsEditing(false);
       } else {
-        alert("Error al guardar. Verifica los datos.");
+        setError("Error al guardar. Verifica los datos.");
       }
     } catch (error) {
       console.error('Error saving category:', error);
-      alert("Error de conexión al guardar.");
+      setError("Error de conexión al guardar.");
     }
   };
 
@@ -124,12 +126,14 @@ export const ContentSection = () => {
   const openAddDialog = () => {
     setCurrentCategory({});
     setIsEditing(false);
+    setError(null);
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (category: Category) => {
     setCurrentCategory(category);
     setIsEditing(true);
+    setError(null);
     setIsDialogOpen(true);
   };
 
@@ -216,44 +220,53 @@ export const ContentSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="title">
-                Título
+              <Label htmlFor="title" className={!currentCategory.title && error ? "text-red-500" : ""}>
+                Título *
               </Label>
               <Input
                 id="title"
                 value={currentCategory.title || ''}
                 onChange={(e) => setCurrentCategory({ ...currentCategory, title: e.target.value })}
+                className={!currentCategory.title && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="description">
-                Descripción
+              <Label htmlFor="description" className={!currentCategory.description && error ? "text-red-500" : ""}>
+                Descripción *
               </Label>
               <Input
                 id="description"
                 value={currentCategory.description || ''}
                 onChange={(e) => setCurrentCategory({ ...currentCategory, description: e.target.value })}
+                className={!currentCategory.description && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="image">
-                URL Imagen
+              <Label htmlFor="image" className={!currentCategory.image && error ? "text-red-500" : ""}>
+                URL Imagen *
               </Label>
               <Input
                 id="image"
                 value={currentCategory.image || ''}
                 onChange={(e) => setCurrentCategory({ ...currentCategory, image: e.target.value })}
+                className={!currentCategory.image && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="link">
-                URL Enlace (Ver Más)
+              <Label htmlFor="link" className={!currentCategory.link && error ? "text-red-500" : ""}>
+                URL Enlace (Ver Más) *
               </Label>
               <Input
                 id="link"
                 value={currentCategory.link || ''}
                 onChange={(e) => setCurrentCategory({ ...currentCategory, link: e.target.value })}
+                className={!currentCategory.link && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
           </div>

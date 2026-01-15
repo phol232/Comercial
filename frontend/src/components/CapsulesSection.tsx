@@ -58,10 +58,13 @@ export const CapsulesSection = () => {
     }
   };
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSave = async () => {
+    setError(null);
     // Basic validation
     if (!currentCapsule.title || !currentCapsule.videoUrl) {
-      alert("Por favor completa el título y la URL del video.");
+      setError("Por favor completa el título y la URL del video.");
       return;
     }
 
@@ -83,11 +86,11 @@ export const CapsulesSection = () => {
         setCurrentCapsule({});
         setIsEditing(false);
       } else {
-        alert("Error al guardar cápsula.");
+        setError("Error al guardar cápsula.");
       }
     } catch (error) {
       console.error('Error saving capsule:', error);
-      alert("Error de conexión al guardar.");
+      setError("Error de conexión al guardar.");
     }
   };
 
@@ -112,12 +115,14 @@ export const CapsulesSection = () => {
   const openAddDialog = () => {
     setCurrentCapsule({});
     setIsEditing(false);
+    setError(null);
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (capsule: Capsule) => {
     setCurrentCapsule(capsule);
     setIsEditing(true);
+    setError(null);
     setIsDialogOpen(true);
   };
 
@@ -249,24 +254,31 @@ export const CapsulesSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="title">
-                Título
+              <Label htmlFor="title" className={!currentCapsule.title && error ? "text-red-500" : ""}>
+                Título *
               </Label>
               <Input
                 id="title"
                 value={currentCapsule.title || ''}
                 onChange={(e) => setCurrentCapsule({ ...currentCapsule, title: e.target.value })}
+                className={!currentCapsule.title && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="videoUrl">
-                URL Video (Embed)
+              <Label htmlFor="videoUrl" className={!currentCapsule.videoUrl && error ? "text-red-500" : ""}>
+                URL Video (Embed) *
               </Label>
               <Input
                 id="videoUrl"
                 value={currentCapsule.videoUrl || ''}
                 onChange={(e) => setCurrentCapsule({ ...currentCapsule, videoUrl: e.target.value })}
+                className={!currentCapsule.videoUrl && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">

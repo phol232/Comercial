@@ -79,10 +79,13 @@ export const ResourcesSection = () => {
     }
   };
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSave = async () => {
+    setError(null);
     // Basic validation
     if (!currentResource.title || !currentResource.imageUrl || !currentResource.url) {
-      alert("Por favor completa todos los campos.");
+      setError("Por favor completa todos los campos obligatorios.");
       return;
     }
 
@@ -104,11 +107,11 @@ export const ResourcesSection = () => {
         setCurrentResource({});
         setIsEditing(false);
       } else {
-         alert("Error al guardar. Verifica los datos.");
+         setError("Error al guardar. Verifica los datos.");
       }
     } catch (error) {
       console.error('Error saving resource:', error);
-      alert("Error de conexión al guardar.");
+      setError("Error de conexión al guardar.");
     }
   };
 
@@ -133,14 +136,16 @@ export const ResourcesSection = () => {
   };
 
   const openAddDialog = () => {
-    setCurrentResource({ imageUrl: 'image' });
+    setCurrentResource({ imageUrl: 'image' }); // Changed from type
     setIsEditing(false);
+    setError(null);
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (resource: Resource) => {
     setCurrentResource(resource);
     setIsEditing(true);
+    setError(null);
     setIsDialogOpen(true);
   };
 
@@ -231,35 +236,43 @@ export const ResourcesSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="title">
-                Título
+              <Label htmlFor="title" className={!currentResource.title && error ? "text-red-500" : ""}>
+                Título *
               </Label>
               <Input
                 id="title"
                 value={currentResource.title || ''}
                 onChange={(e) => setCurrentResource({ ...currentResource, title: e.target.value })}
+                className={!currentResource.title && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="imageUrl">
-                URL de Imagen (Vista previa)
+              <Label htmlFor="imageUrl" className={!currentResource.imageUrl && error ? "text-red-500" : ""}>
+                URL de Imagen (Vista previa) *
               </Label>
               <Input
                 id="imageUrl"
                 value={currentResource.imageUrl || ''}
                 onChange={(e) => setCurrentResource({ ...currentResource, imageUrl: e.target.value })}
                 placeholder="https://..."
+                className={!currentResource.imageUrl && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="url">
-                URL Descarga
+              <Label htmlFor="url" className={!currentResource.url && error ? "text-red-500" : ""}>
+                URL Descarga *
               </Label>
               <Input
                 id="url"
                 value={currentResource.url || ''}
                 onChange={(e) => setCurrentResource({ ...currentResource, url: e.target.value })}
+                className={!currentResource.url && error ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
           </div>

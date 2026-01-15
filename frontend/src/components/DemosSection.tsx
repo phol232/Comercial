@@ -81,11 +81,15 @@ export const DemosSection = () => {
     }
   };
 
+  const [industryError, setIndustryError] = useState<string | null>(null);
+  const [demoError, setDemoError] = useState<string | null>(null);
+
   // Industry Handlers
   const handleSaveIndustry = async () => {
+    setIndustryError(null);
     // Basic validation
     if (!currentIndustry.name) {
-       alert("Por favor ingresa un nombre para la industria.");
+       setIndustryError("Por favor ingresa un nombre para la industria.");
        return;
     }
 
@@ -107,14 +111,29 @@ export const DemosSection = () => {
         setCurrentIndustry({});
         setIsEditingIndustry(false);
       } else {
-        alert("Error al guardar industria.");
+        setIndustryError("Error al guardar industria.");
       }
     } catch (error) {
       console.error('Error saving industry:', error);
-      alert("Error de conexión al guardar industria.");
+      setIndustryError("Error de conexión al guardar industria.");
     }
   };
+  
+  const openAddIndustryDialog = () => {
+    setCurrentIndustry({});
+    setIsEditingIndustry(false);
+    setIndustryError(null);
+    setIsIndustryDialogOpen(true);
+  };
 
+  const openEditIndustryDialog = (industry: Industry, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndustry(industry);
+    setIsEditingIndustry(true);
+    setIndustryError(null);
+    setIsIndustryDialogOpen(true);
+  };
+  
   const confirmDeleteIndustry = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setItemToDelete({ id, type: 'industry' });
@@ -144,24 +163,12 @@ export const DemosSection = () => {
     }
   };
 
-  const openAddIndustryDialog = () => {
-    setCurrentIndustry({});
-    setIsEditingIndustry(false);
-    setIsIndustryDialogOpen(true);
-  };
-
-  const openEditIndustryDialog = (industry: Industry, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentIndustry(industry);
-    setIsEditingIndustry(true);
-    setIsIndustryDialogOpen(true);
-  };
-
   // Demo Handlers
   const handleSaveDemo = async () => {
+    setDemoError(null);
     // Basic validation
     if (!currentDemo.title || !currentDemo.url) {
-      alert("Por favor completa el título y la URL del video.");
+      setDemoError("Por favor completa el título y la URL del video.");
       return;
     }
 
@@ -183,18 +190,19 @@ export const DemosSection = () => {
         setCurrentDemo({});
         setIsEditingDemo(false);
       } else {
-        alert("Error al guardar demo.");
+        setDemoError("Error al guardar demo.");
       }
     } catch (error) {
       console.error('Error saving demo:', error);
-      alert("Error de conexión al guardar demo.");
+      setDemoError("Error de conexión al guardar demo.");
     }
   };
-
+  
   const openAddDemoDialog = (industryId: string) => {
     setSelectedIndustryId(industryId);
     setCurrentDemo({});
     setIsEditingDemo(false);
+    setDemoError(null);
     setIsDemoDialogOpen(true);
   };
 
@@ -202,6 +210,7 @@ export const DemosSection = () => {
     setSelectedIndustryId(demo.industryId);
     setCurrentDemo(demo);
     setIsEditingDemo(true);
+    setDemoError(null);
     setIsDemoDialogOpen(true);
   };
 
@@ -384,14 +393,20 @@ export const DemosSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {industryError && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {industryError}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="industry-name">
-                Nombre de Industria
+              <Label htmlFor="industry-name" className={!currentIndustry.name && industryError ? "text-red-500" : ""}>
+                Nombre de Industria *
               </Label>
               <Input
                 id="industry-name"
                 value={currentIndustry.name || ''}
                 onChange={(e) => setCurrentIndustry({ ...currentIndustry, name: e.target.value })}
+                className={!currentIndustry.name && industryError ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
           </div>
@@ -412,24 +427,31 @@ export const DemosSection = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
+            {demoError && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {demoError}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="demo-title">
-                Título
+              <Label htmlFor="demo-title" className={!currentDemo.title && demoError ? "text-red-500" : ""}>
+                Título *
               </Label>
               <Input
                 id="demo-title"
                 value={currentDemo.title || ''}
                 onChange={(e) => setCurrentDemo({ ...currentDemo, title: e.target.value })}
+                className={!currentDemo.title && demoError ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="demo-url">
-                URL Video (Embed)
+              <Label htmlFor="demo-url" className={!currentDemo.url && demoError ? "text-red-500" : ""}>
+                URL Video (Embed) *
               </Label>
               <Input
                 id="demo-url"
                 value={currentDemo.url || ''}
                 onChange={(e) => setCurrentDemo({ ...currentDemo, url: e.target.value })}
+                className={!currentDemo.url && demoError ? "border-red-500 focus-visible:ring-red-500" : ""}
               />
             </div>
             <div className="flex flex-col gap-2">
