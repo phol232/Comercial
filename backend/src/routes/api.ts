@@ -321,7 +321,7 @@ router.delete('/categories/:id', async (req, res) => {
 router.post('/resources', async (req, res) => {
   const resource = new Resource({
     title: req.body.title,
-    type: req.body.type,
+    imageUrl: req.body.imageUrl, // Changed from type to imageUrl
     url: req.body.url
   });
 
@@ -342,7 +342,7 @@ router.put('/resources/:id', async (req, res) => {
     }
 
     resource.title = req.body.title || resource.title;
-    resource.type = req.body.type || resource.type;
+    resource.imageUrl = req.body.imageUrl || resource.imageUrl; // Changed from type to imageUrl
     resource.url = req.body.url || resource.url;
 
     const updatedResource = await resource.save();

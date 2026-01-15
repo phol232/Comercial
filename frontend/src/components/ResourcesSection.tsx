@@ -28,7 +28,7 @@ import { authenticatedFetch } from '@/utils/api';
 interface Resource {
   _id: string;
   title: string;
-  type: string;
+  imageUrl: string;
   url: string;
 }
 
@@ -124,7 +124,7 @@ export const ResourcesSection = () => {
   };
 
   const openAddDialog = () => {
-    setCurrentResource({ type: 'image' });
+    setCurrentResource({ imageUrl: 'image' });
     setIsEditing(false);
     setIsDialogOpen(true);
   };
@@ -137,7 +137,7 @@ export const ResourcesSection = () => {
 
   const getIcon = (resource: Resource) => {
     if (resource.title?.includes('VCA')) return Diamond;
-    return iconMap[resource.type || 'image'] || Star;
+    return iconMap[resource.imageUrl || 'image'] || Star;
   };
 
   return (
@@ -164,8 +164,19 @@ export const ResourcesSection = () => {
             const Icon = getIcon(resource as Resource);
             return (
               <div key={resource._id} className="flex flex-col items-center group w-full max-w-[220px]">
-                <div className="w-40 h-40 rounded-3xl border border-[#a855f7] flex items-center justify-center mb-4 bg-white group-hover:shadow-md transition-all duration-300 relative">
-                  <Icon className="w-16 h-16 text-[#1e293b] stroke-[1.5]" />
+                <div className="w-40 h-40 rounded-3xl border border-[#a855f7] flex items-center justify-center mb-4 bg-white group-hover:shadow-md transition-all duration-300 relative overflow-hidden p-2">
+                   <img 
+                      src={resource.imageUrl} 
+                      alt={resource.title}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.parentElement?.classList.add('fallback-icon-mode');
+                      }}
+                   />
+                   <div className="hidden fallback-icon-mode:flex w-full h-full items-center justify-center absolute inset-0">
+                      <Image className="w-16 h-16 text-[#1e293b] stroke-[1.5]" />
+                   </div>
                 </div>
                 <h3 className="text-lg font-bold text-[#1e293b] text-center mb-2 min-h-[3rem] flex items-start justify-center leading-tight">
                   {resource.title}
@@ -222,27 +233,15 @@ export const ResourcesSection = () => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="type">
-                Tipo
+              <Label htmlFor="imageUrl">
+                URL de Imagen (Vista previa)
               </Label>
-              <div>
-                 <Select 
-                    value={currentResource.type || 'image'}
-                    onValueChange={(value: string) => setCurrentResource({ ...currentResource, type: value })}
-                 >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccionar tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="image">Imagen</SelectItem>
-                      <SelectItem value="logo">Logo</SelectItem>
-                      <SelectItem value="template">Plantilla</SelectItem>
-                      <SelectItem value="mail">Mail</SelectItem>
-                      <SelectItem value="video">Video</SelectItem>
-                      <SelectItem value="doc">Documento</SelectItem>
-                    </SelectContent>
-                 </Select>
-              </div>
+              <Input
+                id="imageUrl"
+                value={currentResource.imageUrl || ''}
+                onChange={(e) => setCurrentResource({ ...currentResource, imageUrl: e.target.value })}
+                placeholder="https://..."
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="url">
