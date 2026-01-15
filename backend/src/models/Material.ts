@@ -3,8 +3,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IMaterial extends Document {
   title: string;
   type: 'presentation' | 'video' | 'chat_web';
-  url: string; // For download or link
-  videoUrl?: string; // Specific for video type (embed)
+  url: string; 
+  videoUrl?: string; 
 }
 
 const MaterialSchema: Schema = new Schema({

@@ -2,8 +2,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IDemo extends Document {
   title: string;
-  url: string; // Video URL (embed)
-  downloadUrl: string; // Drive/Download URL
+  url: string; 
+  downloadUrl: string; 
   industryId: mongoose.Types.ObjectId;
 }
 
