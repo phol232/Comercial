@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css"
 import { Hero } from "@/components/Hero"
+import { SearchBar } from "@/components/SearchBar"
 import { ContentSection } from "@/components/ContentSection"
 import { ResourcesSection } from "@/components/ResourcesSection"
 import { MaterialsSection } from "@/components/MaterialsSection"
@@ -19,6 +20,7 @@ import { CapsulesSection } from "@/components/CapsulesSection"
 	<body class="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
 		<main>
 			<Hero client:load />
+            <SearchBar client:load />
             <ContentSection client:load />
             <ResourcesSection client:load />
             <DemosSection client:load />
