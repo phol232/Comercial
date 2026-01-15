@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
+import { normalizeText } from '@/utils/textUtils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Image, LayoutTemplate, Mail, Video, FileText, Diamond, Star, Pencil, Trash } from "lucide-react";
@@ -57,10 +58,11 @@ export const ResourcesSection = () => {
   }, []);// ... (useEffect and fetchResources)
 
   const SECTION_TITLE = "Recursos gráficos";
-  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+  const normalizedSearch = normalizeText($searchTerm);
+  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
 
   const filteredResources = resources.filter(resource => 
-    isSectionMatch || resource.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || normalizeText(resource.title).includes(normalizedSearch)
   );
 
   if (!loading && filteredResources.length === 0 && $searchTerm) {

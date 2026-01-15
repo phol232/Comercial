@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
+import { normalizeText } from '@/utils/textUtils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -117,10 +118,11 @@ export const CapsulesSection = () => {
   };// ... (useEffect and fetchCapsules)
 
   const SECTION_TITLE = "Cápsulas de conocimiento";
-  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+  const normalizedSearch = normalizeText($searchTerm);
+  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
 
   const filteredCapsules = capsules.filter(capsule => 
-    isSectionMatch || capsule.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || normalizeText(capsule.title).includes(normalizedSearch)
   );
 
   if (!loading && filteredCapsules.length === 0 && $searchTerm) {

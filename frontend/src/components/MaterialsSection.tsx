@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
+import { normalizeText } from '@/utils/textUtils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -120,10 +121,11 @@ export const MaterialsSection = () => {
   };// ... (useEffect and fetchMaterials)
 
   const SECTION_TITLE = "Materiales comerciales";
-  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+  const normalizedSearch = normalizeText($searchTerm);
+  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
 
   const filteredMaterials = materials.filter(material => 
-    isSectionMatch || material.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || normalizeText(material.title).includes(normalizedSearch)
   );
 
   if (!loading && filteredMaterials.length === 0 && $searchTerm) {

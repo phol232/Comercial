@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
+import { normalizeText } from '@/utils/textUtils';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash, X } from "lucide-react";
@@ -55,10 +56,11 @@ export const ContentSection = () => {
   };// ... (useEffect and fetchCategories)
 
   const SECTION_TITLE = "Contenidos Laraigo";
-  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+  const normalizedSearch = normalizeText($searchTerm);
+  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
 
   const filteredCategories = categories.filter(category => 
-    isSectionMatch || category.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || normalizeText(category.title).includes(normalizedSearch)
   );
 
   if (!loading && filteredCategories.length === 0 && $searchTerm) {

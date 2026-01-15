@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
+import { normalizeText } from '@/utils/textUtils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -194,19 +195,21 @@ export const DemosSection = () => {
 
   const getFilteredDemos = (industryId: string) => {
     const SECTION_TITLE = "Demos clientes";
-    const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+    const normalizedSearch = normalizeText($searchTerm);
+    const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
+    
     if (isSectionMatch) return getDemosByIndustry(industryId);
 
     const industry = industries.find(i => i._id === industryId);
-    const industryMatches = industry?.name.toLowerCase().includes($searchTerm.toLowerCase());
+    const industryMatches = normalizeText(industry?.name || '').includes(normalizedSearch);
     
     let relevantDemos = getDemosByIndustry(industryId);
     
     // If search is active and industry name doesn't match, filter demos by title
     if ($searchTerm && !industryMatches) {
-      relevantDemos = relevantDemos.filter(demo => 
-        demo.title.toLowerCase().includes($searchTerm.toLowerCase())
-      );
+       relevantDemos = relevantDemos.filter(demo => 
+         normalizeText(demo.title).includes(normalizedSearch)
+       );
     }
     
     return relevantDemos;
@@ -216,13 +219,15 @@ export const DemosSection = () => {
     if (!$searchTerm) return true;
     
     const SECTION_TITLE = "Demos clientes";
-    const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+    const normalizedSearch = normalizeText($searchTerm);
+    const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
+    
     if (isSectionMatch) return true;
     
-    const industryMatches = industry.name.toLowerCase().includes($searchTerm.toLowerCase());
+    const industryMatches = normalizeText(industry.name).includes(normalizedSearch);
     const industryDemos = getDemosByIndustry(industry._id);
     const hasMatchingDemo = industryDemos.some(demo => 
-      demo.title.toLowerCase().includes($searchTerm.toLowerCase())
+      normalizeText(demo.title).includes(normalizedSearch)
     );
     
     return industryMatches || hasMatchingDemo;
