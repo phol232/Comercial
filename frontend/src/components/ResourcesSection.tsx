@@ -54,17 +54,18 @@ export const ResourcesSection = () => {
 
   useEffect(() => {
     fetchResources();
-  }, []);
+  }, []);// ... (useEffect and fetchResources)
+
+  const SECTION_TITLE = "Recursos gráficos";
+  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
 
   const filteredResources = resources.filter(resource => 
-    resource.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || resource.title.toLowerCase().includes($searchTerm.toLowerCase())
   );
 
   if (!loading && filteredResources.length === 0 && $searchTerm) {
     return null;
-  }
-
-  const fetchResources = async () => {
+  }  const fetchResources = async () => {
     try {
       const response = await fetch(`${API_URL}/api/resources`);
       const data = await response.json();

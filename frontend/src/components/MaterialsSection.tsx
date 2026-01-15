@@ -117,10 +117,13 @@ export const MaterialsSection = () => {
     setCurrentMaterial(material);
     setIsEditing(true);
     setIsDialogOpen(true);
-  };
+  };// ... (useEffect and fetchMaterials)
+
+  const SECTION_TITLE = "Materiales comerciales";
+  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
 
   const filteredMaterials = materials.filter(material => 
-    material.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || material.title.toLowerCase().includes($searchTerm.toLowerCase())
   );
 
   if (!loading && filteredMaterials.length === 0 && $searchTerm) {

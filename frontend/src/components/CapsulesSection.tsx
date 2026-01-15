@@ -114,17 +114,18 @@ export const CapsulesSection = () => {
 
   const toggleDescription = (id: string) => {
     setExpandedCapsuleId(expandedCapsuleId === id ? null : id);
-  };
+  };// ... (useEffect and fetchCapsules)
+
+  const SECTION_TITLE = "Cápsulas de conocimiento";
+  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
 
   const filteredCapsules = capsules.filter(capsule => 
-    capsule.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || capsule.title.toLowerCase().includes($searchTerm.toLowerCase())
   );
 
   if (!loading && filteredCapsules.length === 0 && $searchTerm) {
     return null;
-  }
-
-  return (
+  }  return (
     <div id="capsules-section" className="container mx-auto px-4 mb-24 max-w-[1400px]">
       <div className="relative mb-12">
         <h2 className="text-3xl font-bold text-center text-[#A43E8A]">

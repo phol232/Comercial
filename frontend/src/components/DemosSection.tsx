@@ -193,6 +193,10 @@ export const DemosSection = () => {
   };
 
   const getFilteredDemos = (industryId: string) => {
+    const SECTION_TITLE = "Demos clientes";
+    const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+    if (isSectionMatch) return getDemosByIndustry(industryId);
+
     const industry = industries.find(i => i._id === industryId);
     const industryMatches = industry?.name.toLowerCase().includes($searchTerm.toLowerCase());
     
@@ -210,6 +214,10 @@ export const DemosSection = () => {
 
   const filteredIndustries = industries.filter(industry => {
     if (!$searchTerm) return true;
+    
+    const SECTION_TITLE = "Demos clientes";
+    const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
+    if (isSectionMatch) return true;
     
     const industryMatches = industry.name.toLowerCase().includes($searchTerm.toLowerCase());
     const industryDemos = getDemosByIndustry(industry._id);

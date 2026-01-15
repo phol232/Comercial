@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { searchTerm } from '@/stores/searchStore';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -52,17 +52,18 @@ export const ContentSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };// ... (useEffect and fetchCategories)
+
+  const SECTION_TITLE = "Contenidos Laraigo";
+  const isSectionMatch = SECTION_TITLE.toLowerCase().includes($searchTerm.toLowerCase());
 
   const filteredCategories = categories.filter(category => 
-    category.title.toLowerCase().includes($searchTerm.toLowerCase())
+    isSectionMatch || category.title.toLowerCase().includes($searchTerm.toLowerCase())
   );
 
   if (!loading && filteredCategories.length === 0 && $searchTerm) {
     return null;
   }
-  
-  // ... rest of the component
 
 
   const handleSave = async () => {
@@ -127,6 +128,25 @@ export const ContentSection = () => {
   return (
     <div className="container mx-auto px-4 -mt-7 mb-20 relative z-10 max-w-[1400px]">
       
+      {/* Search Bar */}
+      <div className="w-full relative mb-16">
+        <Input 
+          type="text" 
+          placeholder="Buscar en esta página..." 
+          className="w-full h-14 pl-6 pr-12 border border-slate-400 bg-white text-lg shadow-sm placeholder:text-slate-500 rounded-sm focus-visible:ring-[#a855f7]"
+          value={$searchTerm}
+          onChange={(e) => searchTerm.set(e.target.value)}
+        />
+        {$searchTerm && (
+          <button 
+            onClick={() => searchTerm.set('')}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+      </div>
+
       {/* Section Title and Add Button */}
       <div className="relative mb-12">
         <h2 className="text-3xl font-bold text-center text-[#A43E8A]">
