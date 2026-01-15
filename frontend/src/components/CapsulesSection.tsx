@@ -59,6 +59,12 @@ export const CapsulesSection = () => {
   };
 
   const handleSave = async () => {
+    // Basic validation
+    if (!currentCapsule.title || !currentCapsule.videoUrl) {
+      alert("Por favor completa el título y la URL del video.");
+      return;
+    }
+
     try {
       const endpoint = isEditing
         ? `/api/capsules/${currentCapsule._id}`
@@ -76,9 +82,12 @@ export const CapsulesSection = () => {
         setIsDialogOpen(false);
         setCurrentCapsule({});
         setIsEditing(false);
+      } else {
+        alert("Error al guardar cápsula.");
       }
     } catch (error) {
       console.error('Error saving capsule:', error);
+      alert("Error de conexión al guardar.");
     }
   };
 

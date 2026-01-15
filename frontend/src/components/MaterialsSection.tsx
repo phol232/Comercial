@@ -66,6 +66,17 @@ export const MaterialsSection = () => {
   };
 
   const handleSave = async () => {
+    // Basic validation
+    if (!currentMaterial.title || !currentMaterial.type || !currentMaterial.url) {
+      alert("Por favor completa el título, tipo y URL de descarga.");
+      return;
+    }
+    
+    if (currentMaterial.type === 'video' && !currentMaterial.videoUrl) {
+       alert("Por favor ingresa la URL del video (Embed).");
+       return;
+    }
+
     try {
       const endpoint = isEditing
         ? `/api/materials/${currentMaterial._id}`
@@ -83,9 +94,12 @@ export const MaterialsSection = () => {
         setIsDialogOpen(false);
         setCurrentMaterial({});
         setIsEditing(false);
+      } else {
+        alert("Error al guardar material.");
       }
     } catch (error) {
       console.error('Error saving material:', error);
+      alert("Error de conexión al guardar.");
     }
   };
 

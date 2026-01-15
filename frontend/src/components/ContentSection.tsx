@@ -69,6 +69,12 @@ export const ContentSection = () => {
 
 
   const handleSave = async () => {
+    // Basic validation
+    if (!currentCategory.title || !currentCategory.description || !currentCategory.image || !currentCategory.link) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
     try {
       const endpoint = isEditing 
         ? `/api/categories/${currentCategory._id}`
@@ -86,9 +92,12 @@ export const ContentSection = () => {
         setIsDialogOpen(false);
         setCurrentCategory({});
         setIsEditing(false);
+      } else {
+        alert("Error al guardar. Verifica los datos.");
       }
     } catch (error) {
       console.error('Error saving category:', error);
+      alert("Error de conexión al guardar.");
     }
   };
 

@@ -83,6 +83,12 @@ export const DemosSection = () => {
 
   // Industry Handlers
   const handleSaveIndustry = async () => {
+    // Basic validation
+    if (!currentIndustry.name) {
+       alert("Por favor ingresa un nombre para la industria.");
+       return;
+    }
+
     try {
       const endpoint = isEditingIndustry
         ? `/api/industries/${currentIndustry._id}`
@@ -100,9 +106,12 @@ export const DemosSection = () => {
         setIsIndustryDialogOpen(false);
         setCurrentIndustry({});
         setIsEditingIndustry(false);
+      } else {
+        alert("Error al guardar industria.");
       }
     } catch (error) {
       console.error('Error saving industry:', error);
+      alert("Error de conexión al guardar industria.");
     }
   };
 
@@ -150,6 +159,12 @@ export const DemosSection = () => {
 
   // Demo Handlers
   const handleSaveDemo = async () => {
+    // Basic validation
+    if (!currentDemo.title || !currentDemo.url) {
+      alert("Por favor completa el título y la URL del video.");
+      return;
+    }
+
     try {
       const endpoint = isEditingDemo
         ? `/api/demos/${currentDemo._id}`
@@ -167,9 +182,12 @@ export const DemosSection = () => {
         setIsDemoDialogOpen(false);
         setCurrentDemo({});
         setIsEditingDemo(false);
+      } else {
+        alert("Error al guardar demo.");
       }
     } catch (error) {
       console.error('Error saving demo:', error);
+      alert("Error de conexión al guardar demo.");
     }
   };
 

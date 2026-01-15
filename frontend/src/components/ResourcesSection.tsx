@@ -80,6 +80,12 @@ export const ResourcesSection = () => {
   };
 
   const handleSave = async () => {
+    // Basic validation
+    if (!currentResource.title || !currentResource.imageUrl || !currentResource.url) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
     try {
       const endpoint = isEditing 
         ? `/api/resources/${currentResource._id}`
@@ -97,9 +103,12 @@ export const ResourcesSection = () => {
         setIsDialogOpen(false);
         setCurrentResource({});
         setIsEditing(false);
+      } else {
+         alert("Error al guardar. Verifica los datos.");
       }
     } catch (error) {
       console.error('Error saving resource:', error);
+      alert("Error de conexión al guardar.");
     }
   };
 
