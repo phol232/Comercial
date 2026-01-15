@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash, Play, Plus } from "lucide-react";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
-import { API_URL } from '@/config/api';
+import { authenticatedFetch } from '@/utils/api';
 
 interface Industry {
   _id: string;
@@ -65,8 +65,8 @@ export const DemosSection = () => {
   const fetchData = async () => {
     try {
       const [industriesRes, demosRes] = await Promise.all([
-        fetch(`${API_URL}/api/industries`),
-        fetch(`${API_URL}/api/demos`)
+        authenticatedFetch('/api/industries'),
+        authenticatedFetch('/api/demos')
       ]);
       
       const industriesData = await industriesRes.json();
@@ -84,15 +84,14 @@ export const DemosSection = () => {
   // Industry Handlers
   const handleSaveIndustry = async () => {
     try {
-      const url = isEditingIndustry
-        ? `${API_URL}/api/industries/${currentIndustry._id}`
-        : `${API_URL}/api/industries`;
+      const endpoint = isEditingIndustry
+        ? `/api/industries/${currentIndustry._id}`
+        : `/api/industries`;
       
       const method = isEditingIndustry ? 'PUT' : 'POST';
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentIndustry),
       });
 
@@ -122,12 +121,12 @@ export const DemosSection = () => {
     if (!itemToDelete) return;
 
     const { id, type } = itemToDelete;
-    const url = type === 'industry' 
-      ? `${API_URL}/api/industries/${id}`
-      : `${API_URL}/api/demos/${id}`;
+    const endpoint = type === 'industry' 
+      ? `/api/industries/${id}`
+      : `/api/demos/${id}`;
 
     try {
-      await fetch(url, { method: 'DELETE' });
+      await authenticatedFetch(endpoint, { method: 'DELETE' });
       fetchData();
       setIsDeleteModalOpen(false);
       setItemToDelete(null);
@@ -152,15 +151,14 @@ export const DemosSection = () => {
   // Demo Handlers
   const handleSaveDemo = async () => {
     try {
-      const url = isEditingDemo
-        ? `${API_URL}/api/demos/${currentDemo._id}`
-        : `${API_URL}/api/demos`;
+      const endpoint = isEditingDemo
+        ? `/api/demos/${currentDemo._id}`
+        : `/api/demos`;
       
       const method = isEditingDemo ? 'PUT' : 'POST';
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...currentDemo, industryId: selectedIndustryId }),
       });
 

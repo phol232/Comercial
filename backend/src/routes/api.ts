@@ -1,12 +1,60 @@
 import express, { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import Resource from '../models/Resource.js';
 import Category from '../models/Category.js';
 import Industry from '../models/Industry.js';
 import Demo from '../models/Demo.js';
 import Capsule from '../models/Capsule.js';
 import Material from '../models/Material.js';
+import User from '../models/User.js';
 
 const router: Router = express.Router();
+
+// Middleware to verify JWT
+const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.header('Authorization')?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET || 'secretKey');
+    (req as any).user = verified;
+    next();
+  } catch (err) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
+// Login Route
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Email or password incorrect' });
+    }
+
+    // Validate password
+    const validPassword = await user.comparePassword(password);
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Email or password incorrect' });
+    }
+
+    // Create and assign token
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || 'secretKey', { expiresIn: '1d' });
+    res.header('Authorization', token).json({ token });
+  } catch (err) {
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
+
+// Protect all routes below this line
+router.use(verifyToken);
 
 // Get all capsules
 router.get('/capsules', async (req, res) => {

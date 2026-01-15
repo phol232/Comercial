@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
-import { API_URL } from '@/config/api';
+import { authenticatedFetch } from '@/utils/api';
 
 interface Category {
   _id: string;
@@ -45,7 +45,7 @@ export const ContentSection = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/categories`);
+      const response = await authenticatedFetch('/api/categories');
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -70,17 +70,14 @@ export const ContentSection = () => {
 
   const handleSave = async () => {
     try {
-      const url = isEditing 
-        ? `${API_URL}/api/categories/${currentCategory._id}`
-        : `${API_URL}/api/categories`;
+      const endpoint = isEditing 
+        ? `/api/categories/${currentCategory._id}`
+        : `/api/categories`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(endpoint, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(currentCategory),
       });
 
@@ -104,7 +101,7 @@ export const ContentSection = () => {
     if (!itemToDelete) return;
     
     try {
-      await fetch(`${API_URL}/api/categories/${itemToDelete}`, {
+      await authenticatedFetch(`/api/categories/${itemToDelete}`, {
         method: 'DELETE',
       });
       fetchCategories();

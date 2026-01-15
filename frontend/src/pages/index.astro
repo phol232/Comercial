@@ -1,12 +1,6 @@
 ---
 import "@/styles/global.css"
-import { Hero } from "@/components/Hero"
-import { SearchBar } from "@/components/SearchBar"
-import { ContentSection } from "@/components/ContentSection"
-import { ResourcesSection } from "@/components/ResourcesSection"
-import { MaterialsSection } from "@/components/MaterialsSection"
-import { DemosSection } from "@/components/DemosSection"
-import { CapsulesSection } from "@/components/CapsulesSection"
+import { Dashboard } from "@/components/Dashboard"
 ---
 
 <html lang="es">
@@ -19,13 +13,7 @@ import { CapsulesSection } from "@/components/CapsulesSection"
 	</head>
 	<body class="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
 		<main>
-			<Hero client:load />
-            <SearchBar client:load />
-            <ContentSection client:load />
-            <ResourcesSection client:load />
-            <DemosSection client:load />
-            <CapsulesSection client:load />
-            <MaterialsSection client:load />
+			<Dashboard client:only="react" />
 		</main>
 	</body>
 </html>

@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash, Plus } from "lucide-react";
 
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
-import { API_URL } from '@/config/api';
+import { authenticatedFetch } from '@/utils/api';
 
 interface Capsule {
   _id: string;
@@ -48,7 +48,7 @@ export const CapsulesSection = () => {
 
   const fetchCapsules = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/capsules`);
+      const response = await authenticatedFetch('/api/capsules');
       const data = await response.json();
       setCapsules(data);
     } catch (error) {
@@ -60,15 +60,14 @@ export const CapsulesSection = () => {
 
   const handleSave = async () => {
     try {
-      const url = isEditing
-        ? `${API_URL}/api/capsules/${currentCapsule._id}`
-        : `${API_URL}/api/capsules`;
+      const endpoint = isEditing
+        ? `/api/capsules/${currentCapsule._id}`
+        : `/api/capsules`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentCapsule),
       });
 
@@ -92,7 +91,7 @@ export const CapsulesSection = () => {
     if (!itemToDelete) return;
 
     try {
-      await fetch(`${API_URL}/api/capsules/${itemToDelete}`, { method: 'DELETE' });
+      await authenticatedFetch(`/api/capsules/${itemToDelete}`, { method: 'DELETE' });
       fetchCapsules();
       setIsDeleteModalOpen(false);
       setItemToDelete(null);
