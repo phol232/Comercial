@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { searchTerm } from '@/stores/searchStore';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +26,7 @@ interface Capsule {
 }
 
 export const CapsulesSection = () => {
+  const $searchTerm = useStore(searchTerm);
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedCapsuleId, setExpandedCapsuleId] = useState<string | null>(null);
@@ -113,6 +116,14 @@ export const CapsulesSection = () => {
     setExpandedCapsuleId(expandedCapsuleId === id ? null : id);
   };
 
+  const filteredCapsules = capsules.filter(capsule => 
+    capsule.title.toLowerCase().includes($searchTerm.toLowerCase())
+  );
+
+  if (!loading && filteredCapsules.length === 0 && $searchTerm) {
+    return null;
+  }
+
   return (
     <div id="capsules-section" className="container mx-auto px-4 mb-24 max-w-[1400px]">
       <div className="relative mb-12">
@@ -133,7 +144,7 @@ export const CapsulesSection = () => {
         {loading ? (
           <p className="text-center col-span-4 text-slate-500">Cargando cápsulas...</p>
         ) : (
-          capsules.slice(0, visibleCount).map((capsule) => (
+          filteredCapsules.slice(0, visibleCount).map((capsule) => (
             <div key={capsule._id} className="flex flex-col bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all duration-300">
               <div className="relative aspect-video bg-slate-100">
                 <iframe 
@@ -194,7 +205,7 @@ export const CapsulesSection = () => {
           ))
         )}
 
-        {!loading && capsules.length < visibleCount && (
+        {!loading && filteredCapsules.length < visibleCount && (
           <div 
             onClick={openAddDialog}
             className="flex flex-col items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#A43E8A] hover:bg-purple-50 transition-all duration-300 cursor-pointer min-h-[350px] gap-4 group"
@@ -207,7 +218,7 @@ export const CapsulesSection = () => {
         )}
       </div>
 
-      {!loading && visibleCount < capsules.length + 1 && (
+      {!loading && visibleCount < filteredCapsules.length + 1 && (
         <div className="flex justify-center mt-8">
           <Button 
             onClick={() => setVisibleCount(prev => prev + 8)}

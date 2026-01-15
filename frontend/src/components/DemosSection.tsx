@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { searchTerm } from '@/stores/searchStore';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +37,7 @@ interface Demo {
 }
 
 export const DemosSection = () => {
+  const $searchTerm = useStore(searchTerm);
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [demos, setDemos] = useState<Demo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,6 +192,38 @@ export const DemosSection = () => {
     return demos.filter(demo => demo.industryId === industryId);
   };
 
+  const getFilteredDemos = (industryId: string) => {
+    const industry = industries.find(i => i._id === industryId);
+    const industryMatches = industry?.name.toLowerCase().includes($searchTerm.toLowerCase());
+    
+    let relevantDemos = getDemosByIndustry(industryId);
+    
+    // If search is active and industry name doesn't match, filter demos by title
+    if ($searchTerm && !industryMatches) {
+      relevantDemos = relevantDemos.filter(demo => 
+        demo.title.toLowerCase().includes($searchTerm.toLowerCase())
+      );
+    }
+    
+    return relevantDemos;
+  };
+
+  const filteredIndustries = industries.filter(industry => {
+    if (!$searchTerm) return true;
+    
+    const industryMatches = industry.name.toLowerCase().includes($searchTerm.toLowerCase());
+    const industryDemos = getDemosByIndustry(industry._id);
+    const hasMatchingDemo = industryDemos.some(demo => 
+      demo.title.toLowerCase().includes($searchTerm.toLowerCase())
+    );
+    
+    return industryMatches || hasMatchingDemo;
+  });
+
+  if (!loading && filteredIndustries.length === 0 && $searchTerm) {
+    return null;
+  }
+
   return (
     <div id="demos-section" className="container mx-auto px-4 mb-24 max-w-[1400px]">
       <div className="relative mb-12">
@@ -210,7 +245,7 @@ export const DemosSection = () => {
           <p className="text-center text-slate-500">Cargando demos...</p>
         ) : (
           <Accordion type="single" collapsible className="w-full space-y-4">
-            {industries.map((industry) => (
+            {filteredIndustries.map((industry) => (
               <AccordionItem key={industry._id} value={industry._id} className="border border-[#a855f7] rounded-lg px-4 bg-white">
                 <AccordionTrigger className="hover:no-underline py-4">
                   <div className="flex items-center justify-between w-full pr-4">
@@ -247,7 +282,7 @@ export const DemosSection = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {getDemosByIndustry(industry._id).map((demo) => (
+                      {getFilteredDemos(industry._id).map((demo) => (
                         <div key={demo._id} className="flex flex-col">
                           <div className="relative rounded-xl overflow-hidden shadow-md mb-3 group aspect-video bg-slate-100">
                             <iframe 

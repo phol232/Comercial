@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { searchTerm } from '@/stores/searchStore';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Image, LayoutTemplate, Mail, Video, FileText, Diamond, Star, Pencil, Trash } from "lucide-react";
@@ -39,6 +41,7 @@ const iconMap: Record<string, any> = {
 };
 
 export const ResourcesSection = () => {
+  const $searchTerm = useStore(searchTerm);
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,6 +55,14 @@ export const ResourcesSection = () => {
   useEffect(() => {
     fetchResources();
   }, []);
+
+  const filteredResources = resources.filter(resource => 
+    resource.title.toLowerCase().includes($searchTerm.toLowerCase())
+  );
+
+  if (!loading && filteredResources.length === 0 && $searchTerm) {
+    return null;
+  }
 
   const fetchResources = async () => {
     try {
@@ -149,7 +160,7 @@ export const ResourcesSection = () => {
         {loading ? (
            <p className="text-center w-full text-slate-500">Cargando recursos...</p>
         ) : (
-          resources.map((resource) => {
+          filteredResources.map((resource) => {
             const Icon = getIcon(resource as Resource);
             return (
               <div key={resource._id} className="flex flex-col items-center group w-full max-w-[220px]">

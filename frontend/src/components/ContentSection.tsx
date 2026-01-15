@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { searchTerm } from '@/stores/searchStore';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X, Pencil, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +27,7 @@ interface Category {
 }
 
 export const ContentSection = () => {
+  const $searchTerm = useStore(searchTerm);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -50,6 +53,17 @@ export const ContentSection = () => {
       setLoading(false);
     }
   };
+
+  const filteredCategories = categories.filter(category => 
+    category.title.toLowerCase().includes($searchTerm.toLowerCase())
+  );
+
+  if (!loading && filteredCategories.length === 0 && $searchTerm) {
+    return null;
+  }
+  
+  // ... rest of the component
+
 
   const handleSave = async () => {
     try {
@@ -112,18 +126,7 @@ export const ContentSection = () => {
 
   return (
     <div className="container mx-auto px-4 -mt-7 mb-20 relative z-10 max-w-[1400px]">
-      {/* Search Bar */}
-      <div className="w-full relative mb-16">
-        <Input 
-          type="text" 
-          placeholder="Buscar en esta página..." 
-          className="w-full h-14 pl-6 pr-12 border border-slate-400 bg-white text-lg shadow-sm placeholder:text-slate-500 rounded-sm focus-visible:ring-[#a855f7]"
-        />
-        <button className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-
+      
       {/* Section Title and Add Button */}
       <div className="relative mb-12">
         <h2 className="text-3xl font-bold text-center text-[#A43E8A]">
@@ -144,7 +147,7 @@ export const ContentSection = () => {
         {loading ? (
            <p className="text-center col-span-5 text-slate-500">Cargando contenidos...</p>
         ) : (
-          categories.map((category) => (
+          filteredCategories.map((category) => (
             <div key={category._id} className="flex flex-col items-center">
                <div className="w-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 flex flex-col h-full group">
                   <div className="h-32 bg-slate-100 overflow-hidden relative">

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { searchTerm } from '@/stores/searchStore';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +32,7 @@ interface Material {
 }
 
 export const MaterialsSection = () => {
+  const $searchTerm = useStore(searchTerm);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -116,10 +119,18 @@ export const MaterialsSection = () => {
     setIsDialogOpen(true);
   };
 
+  const filteredMaterials = materials.filter(material => 
+    material.title.toLowerCase().includes($searchTerm.toLowerCase())
+  );
+
+  if (!loading && filteredMaterials.length === 0 && $searchTerm) {
+    return null;
+  }
+
   // Filtered lists
-  const presentations = materials.filter(m => m.type === 'presentation');
-  const videos = materials.filter(m => m.type === 'video');
-  const chatWebMaterials = materials.filter(m => m.type === 'chat_web');
+  const presentations = filteredMaterials.filter(m => m.type === 'presentation');
+  const videos = filteredMaterials.filter(m => m.type === 'video');
+  const chatWebMaterials = filteredMaterials.filter(m => m.type === 'chat_web');
 
   // Carousel Logic
   const nextPresentation = () => {
