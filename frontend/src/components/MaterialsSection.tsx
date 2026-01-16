@@ -147,6 +147,7 @@ export const MaterialsSection = () => {
   );
 
   if (!loading && filteredMaterials.length === 0 && $searchTerm) {
+    console.log("MaterialsSection: No results found for", $searchTerm);
     return null;
   }
 

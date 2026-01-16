@@ -259,6 +259,7 @@ export const DemosSection = () => {
   });
 
   if (!loading && filteredIndustries.length === 0 && $searchTerm) {
+    console.log("DemosSection: No results found for", $searchTerm);
     return null;
   }
 

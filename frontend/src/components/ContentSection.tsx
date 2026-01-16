@@ -65,9 +65,9 @@ export const ContentSection = () => {
   );
 
   if (!loading && filteredCategories.length === 0 && $searchTerm) {
+    console.log("ContentSection: No results found for", $searchTerm);
     return null;
   }
-
 
   const handleSave = async () => {
     setError(null);

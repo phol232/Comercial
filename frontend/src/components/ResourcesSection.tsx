@@ -53,21 +53,12 @@ export const ResourcesSection = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
+  // Error state moved up
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchResources();
-  }, []);// ... (useEffect and fetchResources)
-
-  const SECTION_TITLE = "Recursos gráficos";
-  const normalizedSearch = normalizeText($searchTerm);
-  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
-
-  const filteredResources = resources.filter(resource => 
-    isSectionMatch || normalizeText(resource.title).includes(normalizedSearch)
-  );
-
-  if (!loading && filteredResources.length === 0 && $searchTerm) {
-    return null;
-  }
+  }, []);
 
   const fetchResources = async () => {
     try {
@@ -81,7 +72,21 @@ export const ResourcesSection = () => {
     }
   };
 
-  const [error, setError] = useState<string | null>(null);
+  const SECTION_TITLE = "Recursos gráficos";
+  const normalizedSearch = normalizeText($searchTerm);
+  const isSectionMatch = normalizeText(SECTION_TITLE).includes(normalizedSearch);
+
+  const filteredResources = resources.filter(resource => 
+    isSectionMatch || normalizeText(resource.title).includes(normalizedSearch)
+  );
+
+  // Return logic is now SAFE because all hooks are declared above
+  if (!loading && filteredResources.length === 0 && $searchTerm) {
+    console.log("ResourcesSection: No results found for", $searchTerm);
+    return null;
+  }
+
+  console.log("ResourcesSection: Rendering with results", filteredResources.length);
 
   const handleSave = async () => {
     setError(null);

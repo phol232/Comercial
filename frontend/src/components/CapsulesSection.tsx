@@ -139,6 +139,7 @@ export const CapsulesSection = () => {
   );
 
   if (!loading && filteredCapsules.length === 0 && $searchTerm) {
+    console.log("CapsulesSection: No results found for", $searchTerm);
     return null;
   }  return (
     <div id="capsules-section" className="container mx-auto px-4 mb-24 max-w-[1400px]">
