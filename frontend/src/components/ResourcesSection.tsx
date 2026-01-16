@@ -67,7 +67,9 @@ export const ResourcesSection = () => {
 
   if (!loading && filteredResources.length === 0 && $searchTerm) {
     return null;
-  }  const fetchResources = async () => {
+  }
+
+  const fetchResources = async () => {
     try {
       const response = await authenticatedFetch('/api/resources');
       const data = await response.json();
